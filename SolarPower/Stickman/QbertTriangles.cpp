@@ -25,10 +25,10 @@ GLfloat rotAngle = 0.0;     // Snúningshorn minni tenings
 
 GLint modelview;            // Staðsetning líkanafylkis í hnútalitara
 GLint projection;           // Staðsetning ofanvarpfylkis í hnútalitara
-
-const int NumVertices = 1584; //(6 faces)(2 triangles/face)(3 vertices/triangle)(44 cubes)
-
-point4 points[NumVertices]; //óbreytilegir punktar fyrir pýramíddann
+Model_PLY PLYfile;
+const int NumVertices = 1584; //(6 faces)(2 triangles/face)(3 vertices/triangle)(44 cubes) + sizeOfPly
+    
+point4 points[NumVertices]; //óbreytilegir punktar fyrir pýramídd
 color4 colors[NumVertices]; //litir fyrir pýramíddann , placeholder verður inní cubes
 vec4 pyramidarray[44]; //heldur utan um miðjur á kubbum
 Cube cubearray[44];	//heldur utan um alla kubba, array position notað fyrir move()
@@ -36,7 +36,7 @@ int Index = 0; //globar breyta fyrir quad()
 int pyrIndex = 0; //heldur utam um hvert við erum komin í cubearray og pyramidarray
 int activeCube = 0; //index í cubearray hvar við erum
 int quadrant = 1; //á hvaða fjórðung við erum að horfa á sbr. camera angle
-Model_PLY PLYfile;
+
 
 
 //bjó til mitt eigið abs() func
@@ -347,6 +347,10 @@ init()
 {
     pyramidinator();
 
+	//load ply stuff
+	PLYfile.Load( "teapot-n.ply" );
+	GLint sizeOfPly = 3*sizeof(vec4)*PLYfile.NumberOfFaces;
+
     // Create a vertex array object
     GLuint vao;
     glGenVertexArrays( 1, &vao );
@@ -358,6 +362,32 @@ init()
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
     glBufferData( GL_ARRAY_BUFFER, sizeof(points)+sizeof(colors), NULL, GL_STATIC_DRAW );
     
+
+
+
+
+
+
+
+
+
+
+
+
+	PLYfile.Load( "teapot-n.ply" );
+	
+    GLint SizeOfVertexVector = 3*sizeof(vec4)*PLYfile.NumberOfFaces;
+    GLint SizeOfNormalsVector = 3*sizeof(vec3)*PLYfile.NumberOfFaces;
+	cout << SizeOfVertexVector << endl;
+    // Create and initialize a buffer object
+    GLuint buffer1;
+    glGenBuffers( 1, &buffer1 );
+    glBindBuffer( GL_ARRAY_BUFFER, buffer1 );
+    glBufferData( GL_ARRAY_BUFFER, SizeOfVertexVector+SizeOfNormalsVector, NULL, GL_STATIC_DRAW );
+    glBufferSubData( GL_ARRAY_BUFFER, 0, SizeOfVertexVector, PLYfile.TriangleVertices );
+    glBufferSubData( GL_ARRAY_BUFFER, SizeOfVertexVector, SizeOfNormalsVector, PLYfile.TriangleNormals );
+
+
 
     // Load shaders and use the resulting shader program
     GLuint program = InitShader( "vshaderctm.glsl", "fshaderctm.glsl" );
@@ -377,9 +407,6 @@ init()
     projection = glGetUniformLocation( program, "projection" );
 
     glEnable( GL_DEPTH_TEST );
-    glClearColor( 1.0, 1.0, 1.0, 1.0 );
-
-    glEnable( GL_DEPTH_TEST );
 
     glClearColor( 1.0, 1.0, 1.0, 1.0 );
 }
@@ -389,7 +416,10 @@ init()
 void
 display( void )
 {
+
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+
 	glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(points), points );
     glBufferSubData( GL_ARRAY_BUFFER, sizeof(points), sizeof(colors), colors );
 
@@ -406,6 +436,23 @@ display( void )
     // Draw the larger cube
     glUniformMatrix4fv( modelview, 1, GL_TRUE, mv );
     glDrawArrays( GL_TRIANGLES, 0, NumVertices );
+
+	
+	float x = cubearray[activeCube].topcords.x;
+	float y = cubearray[activeCube].topcords.y;
+	float z = cubearray[activeCube].topcords.z;
+	mat4 likan;
+	likan = mv;
+	likan *= Translate( x, y, z );
+	likan *= Scale(0.2, 0.2, 0.2);
+    likan *= RotateX( -90.0 );
+
+	// Teikna líkanið
+	glBufferSubData( GL_ARRAY_BUFFER, 0, 3*sizeof(vec4)*PLYfile.NumberOfFaces, PLYfile.TriangleVertices );
+	glUniformMatrix4fv( modelview, 1, GL_TRUE, likan );
+    glDrawArrays( GL_TRIANGLES, 0, 3*PLYfile.NumberOfFaces );
+
+
 
     glutSwapBuffers();
 }
