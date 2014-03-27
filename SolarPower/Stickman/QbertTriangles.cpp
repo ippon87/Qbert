@@ -16,8 +16,8 @@ using namespace std;
 typedef Angel::vec4  color4;
 typedef Angel::vec4  point4;
 
-static int spinx = 25;       // Snúningur í x-hniti
-static int spiny = -40;       // Snúningur í y-hniti
+int spinx = 25;       // Snúningur í x-hniti
+int spiny = -40;       // Snúningur í y-hniti
 int origx, origy;           // Upphafleg staða músar
 GLfloat curr_z = 10.0;       // Núverandi z-hnit auga
 GLfloat curr_x = 0.0;       // Núverandi x-hnit auga
@@ -47,6 +47,8 @@ double myabs(double x)
 	else
 		return x;
 }
+
+
 
 // Vertices of a unit cube centered at origin, sides aligned with axes
 
@@ -158,30 +160,149 @@ int pyramidIndex(GLfloat x, GLfloat y, GLfloat z)
 
 //gefur öllum cubes í cubearray left, right, top og bottom sem int sem vísar í indexof() fyrir hreyfingu
 //frá þeim kubb
-void findDirections()
+void findDirections(int quadrant)
 {
-	for(int i = 0; i<44; i++)
-	{
-		if(searchInPyramidArray(pyramidarray[i].x+1.0, pyramidarray[i].y, pyramidarray[i].z))
-			cubearray[i].right = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
-		else
-			cubearray[i].right = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+	switch(quadrant){
+	case 1:
+		for(int i = 0; i<44; i++)
+		{
+			if(searchInPyramidArray(pyramidarray[i].x+1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
 
-		if(searchInPyramidArray(pyramidarray[i].x-1.0, pyramidarray[i].y, pyramidarray[i].z))
-			cubearray[i].left = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
-		else
-			cubearray[i].left = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+			if(searchInPyramidArray(pyramidarray[i].x-1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
 
-		if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z-1.0))
-			cubearray[i].top = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z-1.0);
-		else
-			cubearray[i].top = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z-1.0);
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z-1.0))
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z-1.0);
+			else
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z-1.0);
 
-		if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z+1.0))
-			cubearray[i].bottom = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z+1.0);
-		else
-			cubearray[i].bottom = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z+1.0);
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z+1.0))
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z+1.0);
+			else
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z+1.0);
+		}
+		break;
+		
+	case 2:
+		for(int i = 0; i<44; i++)
+		{
+			if(searchInPyramidArray(pyramidarray[i].x+1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+
+			if(searchInPyramidArray(pyramidarray[i].x-1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z-1.0))
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z-1.0);
+			else
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z-1.0);
+
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z+1.0))
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z+1.0);
+			else
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z+1.0);
+		}
+		break;
+
+	case 3:
+		for(int i = 0; i<44; i++)
+		{
+			if(searchInPyramidArray(pyramidarray[i].x+1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+
+			if(searchInPyramidArray(pyramidarray[i].x-1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z-1.0))
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z-1.0);
+			else
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z-1.0);
+
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z+1.0))
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z+1.0);
+			else
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z+1.0);
+		}
+		break;
+
+		case 4:
+		for(int i = 0; i<44; i++)
+		{
+			if(searchInPyramidArray(pyramidarray[i].x+1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].top = pyramidIndex(pyramidarray[i].x+1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+
+			if(searchInPyramidArray(pyramidarray[i].x-1.0, pyramidarray[i].y, pyramidarray[i].z))
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y+1.0, pyramidarray[i].z);
+			else
+				cubearray[i].bottom = pyramidIndex(pyramidarray[i].x-1.0, pyramidarray[i].y-1.0, pyramidarray[i].z);
+
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z-1.0))
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z-1.0);
+			else
+				cubearray[i].left = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z-1.0);
+
+			if(searchInPyramidArray(pyramidarray[i].x, pyramidarray[i].y, pyramidarray[i].z+1.0))
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y+1.0, pyramidarray[i].z+1.0);
+			else
+				cubearray[i].right = pyramidIndex(pyramidarray[i].x, pyramidarray[i].y-1.0, pyramidarray[i].z+1.0);
+		}
+		break;
 	}
+}
+
+void findRotation(int quadrant)
+{
+	switch(quadrant)
+	{
+	case 1:
+		spinx = 25;       // Snúningur í x-hniti
+		spiny = -40;
+		break;
+	case 2:
+		spinx = 25;       // Snúningur í x-hniti
+		spiny = -126;
+		break;
+	case 3: 
+		spinx = 25;
+		spiny = -220;
+		break;
+	case 4:
+		spinx = 25;
+		spiny = 47;
+		break;
+	}
+	
+	
+}
+
+void findQuadrant(bool x, bool z)
+{
+	if(x && z)
+		quadrant = 1;
+	if(x && !z)
+		quadrant = 2;
+	if(!x && !z)
+		quadrant = 3;
+	if(!x && z)
+		quadrant = 4;
+
+	findDirections(quadrant);
+	findRotation(quadrant);
 }
 
 //fallið sem að býr til allann pýramíddann
@@ -197,7 +318,7 @@ void pyramidinator()
 		}
 	}
 
-	findDirections();
+	findDirections(1);
 	//activeCube = cubearray[0];
 }
 
@@ -330,38 +451,42 @@ void myidle()
 // Up/niður-örvar færa fær/nær, vinstri/hægri-örvar færa til hliðar
 void myspecialkey ( int key, int x, int y )
 {
+	bool oldXPos = cubearray[activeCube].middle.x < 0;
+	bool oldZPos = cubearray[activeCube].middle.z < 0;
     switch(key) {
         case GLUT_KEY_UP:
 			{
 			activeCube = cubearray[activeCube].top;
-			cout << activeCube;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
 			}
-			cout << "x: " << spinx << " , y: " << spiny;
+			cout << "x: " << spinx << " , y: " << spiny << "\n";
             break;
         case GLUT_KEY_DOWN:
             {
 			activeCube = cubearray[activeCube].bottom;
-			cout << activeCube;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
 			}
             break;
         case GLUT_KEY_LEFT:
             {
 			activeCube = cubearray[activeCube].left;
-			cout << activeCube;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
 			}
             break;
         case GLUT_KEY_RIGHT:
             {
 			activeCube = cubearray[activeCube].right;
-			cout << activeCube;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
 			}
             break;
     }
-    glutPostRedisplay();
+	cout << "activeCube x: " << cubearray[activeCube].middle.x << " , z: " << cubearray[activeCube].middle.z << "\n";
+    bool newXPos = cubearray[activeCube].middle.x >= 0;
+	bool newZPos = cubearray[activeCube].middle.z >= 0;
+		if( oldXPos != newXPos || newZPos != oldZPos){
+			findQuadrant(newXPos, newZPos);
+	}
+	glutPostRedisplay();
 }
 
 //----------------------------------------------------------------------------
