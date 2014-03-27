@@ -24,6 +24,9 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ply.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h">
@@ -38,5 +41,15 @@
     <ClInclude Include="vec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ply.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fshaderctm.glsl" />
+    <None Include="vshaderctm.glsl" />
+    <None Include="teapot-n.ply">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

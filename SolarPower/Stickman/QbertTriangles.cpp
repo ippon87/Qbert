@@ -11,6 +11,7 @@
 using namespace std;
 #include "Angel.h"
 #include "Cube.cpp"
+#include "ply.h"
 
 typedef Angel::vec4  color4;
 typedef Angel::vec4  point4;
@@ -25,7 +26,7 @@ GLfloat rotAngle = 0.0;     // Snúningshorn minni tenings
 GLint modelview;            // Staðsetning líkanafylkis í hnútalitara
 GLint projection;           // Staðsetning ofanvarpfylkis í hnútalitara
 
-const int NumVertices = 1584; //(6 faces)(2 triangles/face)(3 vertices/triangle)
+const int NumVertices = 1584; //(6 faces)(2 triangles/face)(3 vertices/triangle)(44 cubes)
 
 point4 points[NumVertices]; //óbreytilegir punktar fyrir pýramíddann
 color4 colors[NumVertices]; //litir fyrir pýramíddann , placeholder verður inní cubes
@@ -35,6 +36,8 @@ int Index = 0; //globar breyta fyrir quad()
 int pyrIndex = 0; //heldur utam um hvert við erum komin í cubearray og pyramidarray
 int activeCube = 0; //index í cubearray hvar við erum
 int quadrant = 1; //á hvaða fjórðung við erum að horfa á sbr. camera angle
+Model_PLY PLYfile;
+
 
 //bjó til mitt eigið abs() func
 double myabs(double x)
@@ -89,14 +92,14 @@ bool searchInPyramidArray(GLfloat x, GLfloat y, GLfloat z)
 void makecube( GLfloat x, GLfloat y, GLfloat z)
 {
 	point4 cubecords[8] = {
-    point4( x-0.5, y-0.5,  z+0.5, 1.0 ),
-    point4( x-0.5,  y+0.5,  z+0.5, 1.0 ),
-    point4(  x+0.5,  y+0.5,  z+0.5, 1.0 ),
-    point4(  x+0.5, y-0.5,  z+0.5, 1.0 ),
-    point4( x-0.5, y-0.5, z-0.5, 1.0 ),
-    point4( x-0.5,  y+0.5, z-0.5, 1.0 ),
-    point4(  x+0.5,  y+0.5, z-0.5, 1.0 ),
-    point4(  x+0.5, y-0.5, z-0.5, 1.0 )
+		point4( x-0.5, y-0.5,  z+0.5, 1.0 ),
+		point4( x-0.5,  y+0.5,  z+0.5, 1.0 ),
+		point4(  x+0.5,  y+0.5,  z+0.5, 1.0 ),
+		point4(  x+0.5, y-0.5,  z+0.5, 1.0 ),
+		point4( x-0.5, y-0.5, z-0.5, 1.0 ),
+		point4( x-0.5,  y+0.5, z-0.5, 1.0 ),
+		point4(  x+0.5,  y+0.5, z-0.5, 1.0 ),
+		point4(  x+0.5, y-0.5, z-0.5, 1.0 )
 	};
 
 	quad( cubecords, 1, 0, 3, 2, 0 );
@@ -141,7 +144,6 @@ void cubinator(GLfloat x, GLfloat y, GLfloat z, int i)
 
 int pyramidIndex(GLfloat x, GLfloat y, GLfloat z)
 {
-	vec4 compare = vec4(x, y, z, 1.0);
 	for(int i = 0; i < 44; i++)
 	{
 		//if(pyramidarray[i] == vec4(x, y, z ,1.0))
@@ -197,7 +199,6 @@ void pyramidinator()
 
 	findDirections();
 	//activeCube = cubearray[0];
-	
 }
 
 
@@ -256,6 +257,10 @@ init()
 
     glEnable( GL_DEPTH_TEST );
     glClearColor( 1.0, 1.0, 1.0, 1.0 );
+
+    glEnable( GL_DEPTH_TEST );
+
+    glClearColor( 1.0, 1.0, 1.0, 1.0 );
 }
 
 //----------------------------------------------------------------------------
@@ -280,7 +285,6 @@ display( void )
     // Draw the larger cube
     glUniformMatrix4fv( modelview, 1, GL_TRUE, mv );
     glDrawArrays( GL_TRIANGLES, 0, NumVertices );
-
 
     glutSwapBuffers();
 }

@@ -64,13 +64,20 @@
   <ItemGroup>
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="InitShader.cpp" />
+    <ClCompile Include="ply.cpp" />
     <ClCompile Include="QbertTriangles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
     <ClInclude Include="CheckError.h" />
     <ClInclude Include="mat.h" />
+    <ClInclude Include="ply.h" />
     <ClInclude Include="vec.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fshaderctm.glsl" />
+    <None Include="teapot-n.ply" />
+    <None Include="vshaderctm.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
