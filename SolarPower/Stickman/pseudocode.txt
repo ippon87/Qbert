@@ -1,0 +1,72 @@
+píramídda array = []
+// lykkja sem skapar píramídda
+piramidinator()
+{
+for(int i = 0; i<4; i++)
+ // i = hæð
+ cubinator(0,0-i,0,i)
+}
+ 
+ 
+ cubinator(x,y,z,i)
+ {
+	vec4 cubecords[8] {
+	blah + 0.5
+	}
+	makecube(cubecords[], x,y,z)
+	if(abs(x-1) <= i and searchInPiramidArray(x-1, y, z)
+		cubinator(x-1, y, z, i)
+	if(abs(x+1) <= i and cube not in array)
+		cubinator(x+1, y, z, i)
+	if(abs(z-1) <= i and cube not in array)
+		cubinator(x, y, z-1, i)
+	if(abs(z+1) <= i and cube not in array)
+		cubinator(x, y, z+1, i)
+ }
+ 
+ makecube(cubecords[], x, y, z)
+ { //muna eftir litum kubbar hafa lista array fyrir hliðar
+	new cube object, middle = x,y,z; topcoords = x, y+0.5, z
+	leftbox, rightbox, topbox, botbox;
+	vec4 cubecords, allthecoords;
+	quad
+	quad
+	quad
+	etc
+	push cube in piramid array
+	push
+ }
+ 
+ searchInPiramidArray(x,y,z)
+ {
+	for(int i = 0; i<piramidarray.length; i++)
+	{
+		if(piramidarray[i].middle == vec4(x,y,z))
+			return true
+	}
+	return false
+ }
+ //setja inn liti eftir levels?
+ 
+ struct Cube(){
+	color4 colors[36];
+	point4 middle;
+	point4 top;
+	bool flagged;
+	int top, bottom, left, right;
+	Cube(GLfloat x,y,z, vec4 color){
+		this.middle = vec4(x,y,z,1.0)
+		this.top = vec4(this.middle.x, this.middle.y+0.5, this.middle.z, 1.0)
+ }
+ 
+	Flag(vec4 color)
+	{
+		if(this.flagged)
+			return;
+		else{
+			this.flagged = true;
+			for(int i = 0; i<6; i++)
+			this.colors[i] = color
+		}
+	}
+}
