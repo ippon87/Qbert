@@ -63,16 +63,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Dot.cpp" />
     <ClCompile Include="InitShader.cpp" />
     <ClCompile Include="ply.cpp" />
+    <ClCompile Include="Qbert.cpp" />
     <ClCompile Include="QbertTriangles.cpp" />
+    <ClCompile Include="Snake.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Angel.h" />
     <ClInclude Include="CheckError.h" />
+    <ClInclude Include="Dot.h" />
     <ClInclude Include="mat.h" />
     <ClInclude Include="ply.h" />
     <ClInclude Include="Qbert.h" />
+    <ClInclude Include="Snake.h" />
     <ClInclude Include="vec.h" />
   </ItemGroup>
   <ItemGroup>

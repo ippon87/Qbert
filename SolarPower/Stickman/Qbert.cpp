@@ -1,6 +1,5 @@
 #include "Qbert.h" 
 
-
 Qbert::Qbert( int startPos, int startLives ) {
   activeCube = startPos;
   lives = startLives;

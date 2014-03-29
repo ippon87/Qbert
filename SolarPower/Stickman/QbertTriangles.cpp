@@ -12,6 +12,8 @@ using namespace std;
 #include "Angel.h"
 #include "Cube.cpp"
 #include "Qbert.h"
+#include "Dot.h"
+#include "Snake.h"
 #include "ply.h"
 
 typedef Angel::vec4  color4;
@@ -36,7 +38,11 @@ int Index = 0; //globar breyta fyrir quad()
 int pyrIndex = 0; //heldur utam um hvert við erum komin í cubearray og pyramidarray
 int activeCube = 0; //index í cubearray hvar við erum
 int quadrant = 1; //á hvaða fjórðung við erum að horfa á sbr. camera angle
+int moveTime;
 
+Qbert qbert = Qbert(0, 3);
+Snake badGuySnake= Snake(0, 0); //badguy
+Dot badGuyDot= Dot(0, 0, 2.0); //badguy
 
 
 //bjó til mitt eigið abs() func
@@ -323,6 +329,64 @@ void pyramidinator()
 }
 
 
+int bgSearch(int bgCube)
+{
+
+	int currentCube = bgCube;
+	int currentDiff = activeCube;
+	int currentNext = bgCube;
+	int top = cubearray[currentCube].top;
+	if(top == activeCube)
+		return top;
+	else if (top >= 0)
+		{
+			int diff = myabs(activeCube - top);
+			if(diff < currentDiff)
+			{
+				currentDiff = diff;
+				currentNext = top;
+			}
+		}
+	int bot = cubearray[currentCube].bottom;
+	if(bot == activeCube)
+		return bot;
+	else if (bot >= 0)
+		{
+			int diff = myabs(activeCube - bot);
+			if(diff < currentDiff)
+			{
+				currentDiff = diff;
+				currentNext = bot;
+			}
+		}
+	int left = cubearray[currentCube].left;
+	if(left == activeCube)
+		return left;
+	else if (left >= 0)
+		{
+			int diff = myabs(activeCube - left);
+			if(diff < currentDiff)
+			{
+				currentDiff = diff;
+				currentNext = left;
+			}
+		}
+	int right = cubearray[currentCube].right;
+	if(right == activeCube)
+		return right;
+	else if (right >= 0)
+		{
+			int diff = myabs(activeCube - right);
+			if(diff < currentDiff)
+			{
+				currentDiff = diff;
+				currentNext = right;
+			}
+		}
+
+		return currentNext;
+}
+
 
 
 
@@ -346,6 +410,9 @@ void
 init()
 {
     pyramidinator();
+	moveTime = glutGet(GLUT_ELAPSED_TIME);
+	badGuyDot.setMoveTime( glutGet(GLUT_ELAPSED_TIME) );
+	badGuySnake.setMoveTime( glutGet(GLUT_ELAPSED_TIME) );
 
 	//load ply stuff
 	PLYfile.Load( "teapot-n.ply" );
@@ -361,14 +428,12 @@ init()
     glGenBuffers( 1, &buffer );
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
     glBufferData( GL_ARRAY_BUFFER, sizeof(points)+sizeof(colors), NULL, GL_STATIC_DRAW );
-    
-
 
 	PLYfile.Load( "teapot-n.ply" );
 	
     GLint SizeOfVertexVector = 3*sizeof(vec4)*PLYfile.NumberOfFaces;
     GLint SizeOfNormalsVector = 3*sizeof(vec3)*PLYfile.NumberOfFaces;
-	cout << SizeOfVertexVector << endl;
+
     // Create and initialize a buffer object
     GLuint buffer1;
     glGenBuffers( 1, &buffer1 );
@@ -428,9 +493,11 @@ display( void )
     glDrawArrays( GL_TRIANGLES, 0, NumVertices );
 
 	
-	float x = cubearray[activeCube].topcords.x;
-	float y = cubearray[activeCube].topcords.y;
-	float z = cubearray[activeCube].topcords.z;
+	//Hreyfum Qbert (teketil)
+	float x = cubearray[qbert.getActiveCube()].topcords.x;
+	float y = cubearray[qbert.getActiveCube()].topcords.y;
+	float z = cubearray[qbert.getActiveCube()].topcords.z;
+
 	mat4 likan;
 	likan = mv;
 	likan *= Translate( x, y, z );
@@ -442,6 +509,39 @@ display( void )
 	glUniformMatrix4fv( modelview, 1, GL_TRUE, likan );
     glDrawArrays( GL_TRIANGLES, 0, 3*PLYfile.NumberOfFaces );
 
+
+	//badguyDot
+	float bdg1x = cubearray[badGuyDot.getActiveCube()].topcords.x;
+	float bdg1y = cubearray[badGuyDot.getActiveCube()].topcords.y;
+	float bdg1z = cubearray[badGuyDot.getActiveCube()].topcords.z;
+
+	mat4 bdg1;
+	bdg1 = mv;
+	bdg1 *= Translate( bdg1x, bdg1y, bdg1z );
+	bdg1 *= Scale(0.15, 0.15, 0.15);
+    bdg1 *= RotateX( -90.0 );
+
+	// Teikna líkanið
+	glBufferSubData( GL_ARRAY_BUFFER, 0, 3*sizeof(vec4)*PLYfile.NumberOfFaces, PLYfile.TriangleVertices );
+	glUniformMatrix4fv( modelview, 1, GL_TRUE, bdg1 );
+    glDrawArrays( GL_TRIANGLES, 0, 3*PLYfile.NumberOfFaces );
+
+
+	//badguySnake
+	float bdg2x = cubearray[badGuySnake.getActiveCube()].topcords.x;
+	float bdg2y = cubearray[badGuySnake.getActiveCube()].topcords.y;
+	float bdg2z = cubearray[badGuySnake.getActiveCube()].topcords.z;
+
+	mat4 bdg2;
+	bdg2 = mv;
+	bdg2 *= Translate( bdg1x, bdg2y, bdg2z );
+	bdg2 *= Scale(0.2, 0.2, 0.2);
+    bdg2 *= RotateX( -40.0 );
+
+	// Teikna líkanið
+	glBufferSubData( GL_ARRAY_BUFFER, 0, 3*sizeof(vec4)*PLYfile.NumberOfFaces, PLYfile.TriangleVertices );
+	glUniformMatrix4fv( modelview, 1, GL_TRUE, bdg2 );
+    glDrawArrays( GL_TRIANGLES, 0, 3*PLYfile.NumberOfFaces );
 
 
     glutSwapBuffers();
@@ -481,7 +581,44 @@ void myidle()
 		}
 	}
 
-	
+	//Update bad guys
+	int currTime = glutGet( GLUT_ELAPSED_TIME );
+
+
+	//if(  )
+	//badguydot moves
+	if(currTime - badGuyDot.getMoveTime() >= 1600)
+	{
+		badGuyDot.setMoveTime( currTime );
+
+		//Find next cube
+		int nextCube = cubearray[badGuyDot.getActiveCube()].bottom;
+		if( nextCube != -1 )
+		{
+			badGuyDot.setActiveCube( nextCube );
+			//else death
+		}
+
+		if( badGuyDot.getActiveCube() == qbert.getActiveCube() )
+		{
+			qbert.decreaseLives();
+		}
+	}
+
+	//badguysnake moves
+	if(currTime - badGuySnake.getMoveTime() >= 800)
+	{
+		badGuySnake.setMoveTime( currTime );
+		if( badGuySnake.getActiveCube() == qbert.getActiveCube() )
+		{
+			qbert.decreaseLives();
+		}
+		else
+		{
+			badGuySnake.setActiveCube( bgSearch( badGuySnake.getActiveCube() ) );
+		}
+	}
+
     glutPostRedisplay();
 }
 
@@ -489,39 +626,55 @@ void myidle()
 // Up/niður-örvar færa fær/nær, vinstri/hægri-örvar færa til hliðar
 void myspecialkey ( int key, int x, int y )
 {
+	int currTime = glutGet( GLUT_ELAPSED_TIME );
+	int dt = currTime - moveTime;
+
 	bool oldXPos = cubearray[activeCube].middle.x < 0;
 	bool oldZPos = cubearray[activeCube].middle.z < 0;
-    switch(key) {
-        case GLUT_KEY_UP:
-			if(cubearray[activeCube].top != -1)
-			{
-			activeCube = cubearray[activeCube].top;
-            cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
-			}
-			cout << "x: " << spinx << " , y: " << spiny << "\n";
-            break;
-        case GLUT_KEY_DOWN:
-			if(cubearray[activeCube].bottom != -1)
-            {
-			activeCube = cubearray[activeCube].bottom;
-            cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
-			}
-            break;
-        case GLUT_KEY_LEFT:
-			if(cubearray[activeCube].left != -1)
-            {
-			activeCube = cubearray[activeCube].left;
-            cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
-			}
-            break;
-        case GLUT_KEY_RIGHT:
-			if(cubearray[activeCube].right != -1)
-            {
-			activeCube = cubearray[activeCube].right;
-            cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
-			}
-            break;
-    }
+
+	if(dt >= 200)
+	{
+		moveTime = currTime;
+
+		switch(key) {
+			case GLUT_KEY_UP:
+				if(cubearray[activeCube].top != -1)
+				{
+					qbert.setActiveCube(cubearray[activeCube].top);
+					activeCube = cubearray[activeCube].top;
+					cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
+				}
+				cout << "x: " << spinx << " , y: " << spiny << "\n";
+				break;
+			case GLUT_KEY_DOWN:
+				if(cubearray[activeCube].bottom != -1)
+				{
+					qbert.setActiveCube(cubearray[activeCube].bottom);
+					activeCube = cubearray[activeCube].bottom;
+					cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
+				}
+				break;
+			case GLUT_KEY_LEFT:
+				if(cubearray[activeCube].left != -1)
+				{
+					qbert.setActiveCube(cubearray[activeCube].left);
+					activeCube = cubearray[activeCube].left;
+					cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
+				}
+				break;
+			case GLUT_KEY_RIGHT:
+				if(cubearray[activeCube].right != -1)
+				{
+					qbert.setActiveCube(cubearray[activeCube].right);
+					activeCube = cubearray[activeCube].right;
+					cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
+				}
+				break;
+		}
+	}
+
+	cout << "activeCube: " << activeCube << "\n";	
+	cout << "qbert.activeCube: " << qbert.getActiveCube() << "\n";	
 	cout << "activeCube x: " << cubearray[activeCube].middle.x << " , z: " << cubearray[activeCube].middle.z << "\n";
     bool newXPos = cubearray[activeCube].middle.x >= 0;
 	bool newZPos = cubearray[activeCube].middle.z >= 0;
@@ -536,7 +689,6 @@ void myspecialkey ( int key, int x, int y )
 int
 main( int argc, char **argv )
 {
-	Qbert qbert(1, 3);
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     glutInitWindowSize( 512, 512 );
