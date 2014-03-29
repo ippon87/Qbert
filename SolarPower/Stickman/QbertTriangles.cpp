@@ -42,7 +42,7 @@ int moveTime;
 
 Qbert qbert = Qbert(0, 3);
 Snake badGuySnake= Snake(0, 0); //badguy
-Dot badGuyDot= Dot(0, 0, 2.0); //badguy
+Dot badGuyDot= Dot(0, 0, 4.0); //badguy
 
 
 //bjó til mitt eigið abs() func
@@ -517,7 +517,7 @@ display( void )
 
 	mat4 bdg1;
 	bdg1 = mv;
-	bdg1 *= Translate( bdg1x, bdg1y, bdg1z );
+	bdg1 *= Translate( bdg1x, bdg1y + badGuyDot.getyOffset(), bdg1z );
 	bdg1 *= Scale(0.15, 0.15, 0.15);
     bdg1 *= RotateX( -90.0 );
 
@@ -585,25 +585,36 @@ void myidle()
 	int currTime = glutGet( GLUT_ELAPSED_TIME );
 
 
-	//if(  )
-	//badguydot moves
-	if(currTime - badGuyDot.getMoveTime() >= 1600)
+	if( badGuyDot.getyOffset() > 0.0 )
 	{
-		badGuyDot.setMoveTime( currTime );
-
-		//Find next cube
-		int nextCube = cubearray[badGuyDot.getActiveCube()].bottom;
-		if( nextCube != -1 )
+		badGuyDot.setyOffset( -0.1);
+	}
+	else
+	{
+		//badguydot moves
+		if(currTime - badGuyDot.getMoveTime() >= 900)
 		{
-			badGuyDot.setActiveCube( nextCube );
-			//else death
-		}
+			badGuyDot.setMoveTime( currTime );
 
-		if( badGuyDot.getActiveCube() == qbert.getActiveCube() )
-		{
-			qbert.decreaseLives();
+			//Find next cube
+			int nextCube = cubearray[badGuyDot.getActiveCube()].bottom;
+			if( nextCube != -1 )
+			{
+				badGuyDot.setActiveCube( nextCube );
+			}
+			else
+			{
+				badGuyDot.setyOffset( -0.4 );
+				//and after num tries re init bad guy.
+			}
+
+			if( badGuyDot.getActiveCube() == qbert.getActiveCube() )
+			{
+				qbert.decreaseLives();
+			}
 		}
 	}
+
 
 	//badguysnake moves
 	if(currTime - badGuySnake.getMoveTime() >= 800)

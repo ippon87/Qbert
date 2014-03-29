@@ -8,6 +8,8 @@ class Dot{
 	int getActiveCube(){ return activeCube; };
 	void setActiveCube( int );
 	void setMoveTime( int );
+	float getyOffset(){ return yOffset; };
+	void setyOffset( float );
 	int getMoveTime() { return moveTime; };
 	void move();
 };

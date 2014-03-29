@@ -14,6 +14,10 @@ void Dot::setMoveTime( int newTime ) {
 	moveTime = newTime;
 }
 
+void Dot::setyOffset( float amount) {
+	yOffset += amount;
+}
+
 void Dot::move() {
 
 }
