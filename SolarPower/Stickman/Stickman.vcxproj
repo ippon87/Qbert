@@ -72,6 +72,7 @@
     <ClInclude Include="CheckError.h" />
     <ClInclude Include="mat.h" />
     <ClInclude Include="ply.h" />
+    <ClInclude Include="Qbert.h" />
     <ClInclude Include="vec.h" />
   </ItemGroup>
   <ItemGroup>

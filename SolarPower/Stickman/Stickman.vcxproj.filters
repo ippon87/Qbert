@@ -21,10 +21,10 @@
     <ClCompile Include="QbertTriangles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
+    <ClCompile Include="ply.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ply.cpp">
+    <ClCompile Include="Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,8 +41,11 @@
     <ClInclude Include="vec.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Qbert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ply.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

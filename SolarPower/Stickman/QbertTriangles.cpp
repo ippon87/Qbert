@@ -11,6 +11,7 @@
 using namespace std;
 #include "Angel.h"
 #include "Cube.cpp"
+#include "Qbert.h"
 #include "ply.h"
 
 typedef Angel::vec4  color4;
@@ -21,7 +22,6 @@ int spiny = -40;       // Snúningur í y-hniti
 int origx, origy;           // Upphafleg staða músar
 GLfloat curr_z = 10.0;       // Núverandi z-hnit auga
 GLfloat curr_x = 0.0;       // Núverandi x-hnit auga
-GLfloat rotAngle = 0.0;     // Snúningshorn minni tenings
 
 GLint modelview;            // Staðsetning líkanafylkis í hnútalitara
 GLint projection;           // Staðsetning ofanvarpfylkis í hnútalitara
@@ -77,7 +77,7 @@ void quad(vec4 cubecords[], int a, int b, int c, int d, int side )
 bool searchInPyramidArray(GLfloat x, GLfloat y, GLfloat z)
 {
 	vec4 compare = vec4(x, y, z, 1.0);
-	for(int i = 0; i < 44; i++)
+	for(int i = 0; i <44; i++)
 	{
 		//if(pyramidarray[i] == vec4(x, y, z ,1.0))
 		if(pyramidarray[i].x == x && pyramidarray[i].y == y && pyramidarray[i].z == z )
@@ -270,11 +270,11 @@ void findRotation(int quadrant)
 	switch(quadrant)
 	{
 	case 1:
-		spinx = 25;       // Snúningur í x-hniti
+		spinx = 25;       
 		spiny = -40;
 		break;
 	case 2:
-		spinx = 25;       // Snúningur í x-hniti
+		spinx = 25;       
 		spiny = -126;
 		break;
 	case 3: 
@@ -310,7 +310,7 @@ void pyramidinator()
 {
 	for(int i = 0 ; i<4; i++){
 		cubinator(0,0-i, 0, i);
-		if(i == 2 || i == 3){
+		if(i >= 2 ){
 			makecube(0.0, -i, -i);
 			makecube(0.0, -i, i);
 			makecube(i, -i, 0.0);
@@ -362,16 +362,6 @@ init()
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
     glBufferData( GL_ARRAY_BUFFER, sizeof(points)+sizeof(colors), NULL, GL_STATIC_DRAW );
     
-
-
-
-
-
-
-
-
-
-
 
 
 	PLYfile.Load( "teapot-n.ply" );
@@ -433,7 +423,7 @@ display( void )
     mv *= Translate(curr_x, 0.0, -curr_z);
     mv *= RotateX( (GLfloat)spinx ) * RotateY( (GLfloat)spiny );
 
-    // Draw the larger cube
+    // Teikna kubbanna
     glUniformMatrix4fv( modelview, 1, GL_TRUE, mv );
     glDrawArrays( GL_TRIANGLES, 0, NumVertices );
 
@@ -490,6 +480,7 @@ void myidle()
 			colors[j] = cubearray[i].cubeColors[j - (i*36)];
 		}
 	}
+
 	
     glutPostRedisplay();
 }
@@ -502,6 +493,7 @@ void myspecialkey ( int key, int x, int y )
 	bool oldZPos = cubearray[activeCube].middle.z < 0;
     switch(key) {
         case GLUT_KEY_UP:
+			if(cubearray[activeCube].top != -1)
 			{
 			activeCube = cubearray[activeCube].top;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
@@ -509,18 +501,21 @@ void myspecialkey ( int key, int x, int y )
 			cout << "x: " << spinx << " , y: " << spiny << "\n";
             break;
         case GLUT_KEY_DOWN:
+			if(cubearray[activeCube].bottom != -1)
             {
 			activeCube = cubearray[activeCube].bottom;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
 			}
             break;
         case GLUT_KEY_LEFT:
+			if(cubearray[activeCube].left != -1)
             {
 			activeCube = cubearray[activeCube].left;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
 			}
             break;
         case GLUT_KEY_RIGHT:
+			if(cubearray[activeCube].right != -1)
             {
 			activeCube = cubearray[activeCube].right;
             cubearray[activeCube].Flag(vec4(1.0,1.0,0.0,1.0));
@@ -541,6 +536,7 @@ void myspecialkey ( int key, int x, int y )
 int
 main( int argc, char **argv )
 {
+	Qbert qbert(1, 3);
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     glutInitWindowSize( 512, 512 );
