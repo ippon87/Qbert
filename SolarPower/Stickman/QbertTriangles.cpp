@@ -527,7 +527,7 @@ display( void )
 	}
 	
 	bdg1 *= Scale(0.15, 0.15, 0.15);
-	bdg1 *= RotateX( -90.0 );	
+	bdg1 *= RotateX( -90.0 );
 
 
 	// Teikna líkanið
@@ -593,7 +593,7 @@ void myidle()
 	//Update bad guys
 	int currTime = glutGet( GLUT_ELAPSED_TIME );
 
-
+	//If Dot is in play
 	if( badGuyDot.getyOffset() > 0.0 )
 	{
 		badGuyDot.setyOffset( -0.1);

@@ -35,5 +35,6 @@ void Qbert::changeCubeColor( Cube *cubeArray, vec4 color ) {
 
 int Qbert::decreaseLives() {
   lives -= 1;
+  this->setActiveCube(0);
   return lives;
 }
