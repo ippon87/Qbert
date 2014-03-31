@@ -3,6 +3,7 @@ class Dot{
 	int activeCube;
 	int moveTime;
 	float yOffset;
+	bool atEnd;
   public:
 	Dot(int, int, float);
 	int getActiveCube(){ return activeCube; };

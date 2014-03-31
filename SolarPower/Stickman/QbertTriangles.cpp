@@ -517,9 +517,18 @@ display( void )
 
 	mat4 bdg1;
 	bdg1 = mv;
-	bdg1 *= Translate( bdg1x, bdg1y + badGuyDot.getyOffset(), bdg1z );
+	if( badGuyDot.atEnd )
+	{
+		bdg1 *= Translate( bdg1x, bdg1y + badGuyDot.getyOffset(), bdg1z+1.0 );
+	}
+	else
+	{
+		bdg1 *= Translate( bdg1x, bdg1y + badGuyDot.getyOffset(), bdg1z );
+	}
+	
 	bdg1 *= Scale(0.15, 0.15, 0.15);
-    bdg1 *= RotateX( -90.0 );
+	bdg1 *= RotateX( -90.0 );	
+
 
 	// Teikna líkanið
 	glBufferSubData( GL_ARRAY_BUFFER, 0, 3*sizeof(vec4)*PLYfile.NumberOfFaces, PLYfile.TriangleVertices );
@@ -604,6 +613,7 @@ void myidle()
 			}
 			else
 			{
+				badGuyDot.atEnd = true;
 				badGuyDot.setyOffset( -0.4 );
 				//and after num tries re init bad guy.
 			}

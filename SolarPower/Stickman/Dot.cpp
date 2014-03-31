@@ -4,6 +4,7 @@ Dot::Dot( int startPos, int startTime, float offset ) {
   activeCube = startPos;
   moveTime = startTime;
   yOffset = offset;
+  atEnd = false;
 }
 
 void Dot::setActiveCube( int newPos ) {
